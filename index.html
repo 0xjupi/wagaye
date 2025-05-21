@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Portfolio</title>
+  <!-- Add Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      /*padding: 2rem 1rem;*/
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      /*background: linear-gradient(135deg, rgba(26, 32, 44, 0.95), rgba(45, 55, 72, 0.95));*/
+      padding: 1rem 0;
+      backdrop-filter: blur(5px);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-button {
+      background-color: rgba(75, 85, 99, 0.5);
+      border: none;
+      color: white;
+      border-radius: 9999px;
+      padding: 0.5rem;
+      margin-right: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: rgba(75, 85, 99, 0.7);
+    }
+
+    .date-time-text {
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+
+    .date-time-text.dimmed {
+      opacity: 0.5;
+    }
+
+    /* Main content area */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      padding-bottom: 50vh;
+    }
+
+    /* Home section */
+    .home-section {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    /* Profile section */
+    .profile-container {
+      position: relative;
+      transition: opacity 1s, transform 1s;
+    }
+    
+    @media (max-width: 420px) {
+      .profile-container {
+        width: 70%;
+      }
+      .menu-container {
+        display: none;
+      }
+
+      header {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      header {
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+    }
+
+    .profile-circle {
+      width: 16rem;
+      height: 16rem;
+      border-radius: 50%;
+      background-color: #2d3748;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+
+    .profile-image {
+      position: relative;
+      z-index: 10;
+      height: 18rem;
+      object-fit: cover;
+    }
+
+    .profile-text {
+      position: absolute;
+      top: 1.25rem;
+      right: 0;
+      transform: translateX(7rem);
+    }
+
+    .profile-text h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-text p {
+      font-size: 0.875rem;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-text p span {
+      margin-right: 0.25rem;
+    }
+
+    /* Menu items */
+    .menu-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .menu-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 1s, opacity 1s;
+    }
+
+    .menu-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+      background-color: rgba(124, 58, 237, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .menu-item:hover .menu-icon {
+      background-color: rgba(124, 58, 237, 1);
+      transform: translateY(-5px);
+    }
+
+    .menu-item:hover .menu-icon::before {
+      opacity: 1;
+    }
+
+    .menu-item.left-side .menu-icon {
+      background-color: rgba(37, 99, 235, 0.8);
+    }
+
+    .menu-item.left-side:hover .menu-icon {
+      background-color: rgba(37, 99, 235, 1);
+    }
+
+    .menu-icon-text {
+      font-size: 1.5rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-label {
+      font-size: 1rem;
+      font-weight: 500;
+      opacity: 0.8;
+      white-space: nowrap;
+      transition: opacity 0.3s;
+    }
+
+    .menu-item:hover .menu-label {
+      opacity: 1;
+    }
+
+    /* Content pages */
+    .content-page {
+      width: 100%;
+      max-width: 52rem; /* Increased from 42rem */
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s, transform 1s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      scroll-margin-top: 6rem;
+    }
+
+    .content-page.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .content-title {
+      font-size: 2.25rem; /* Increased from 1.875rem */
+      font-weight: bold;
+      margin-bottom: 2rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .content-title::after {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem;
+      left: 0;
+      width: 3rem;
+      height: 0.25rem;
+      background: linear-gradient(90deg, rgba(124, 58, 237, 1), rgba(37, 99, 235, 1));
+      border-radius: 0.125rem;
+    }
+
+    .content-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 2rem; /* Increased from 1.5rem */
+      border-radius: 0.75rem;
+      margin-bottom: 2rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .content-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(124, 58, 237, 1), rgba(37, 99, 235, 1));
+      border-radius: 4px 0 0 4px;
+    }
+
+    .card-title {
+      font-size: 1.5rem; /* Increased from 1.25rem */
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-subtitle {
+      color: rgb(209, 213, 219);
+      font-size: 1.125rem; /* Increased size */
+    }
+
+    .card-date {
+      color: rgb(156, 163, 175);
+      margin-bottom: 0.75rem;
+    }
+
+    .card-text {
+      margin-top: 0.75rem;
+      font-size: 1.125rem; /* Increased from base size */
+      line-height: 1.6;
+    }
+
+    .card-tags {
+      margin-top: 1rem;
+      color: #5696d1;
+      font-weight: 500;
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 2rem; /* Increased from 1.5rem */
+    }
+
+    @media (min-width: 768px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card-icon {
+      font-size: 2.25rem; /* Increased from 1.875rem */
+      margin-right: 1.5rem;
+      color: rgba(124, 58, 237, 0.9);
+    }
+
+    .flex-card {
+      display: flex;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Navigation Dots */
+    .nav-dots {
+      position: fixed;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-dot {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .nav-dot.active {
+      background-color: rgba(124, 58, 237, 1);
+      transform: scale(1.3);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0.7;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(-50%);
+      }
+      40% {
+        transform: translateY(-10px) translateX(-50%);
+      }
+      60% {
+        transform: translateY(-5px) translateX(-50%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <button id="backButton" class="back-button hidden">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <span class="date-time-text">Good morning</span>
+        <span class="date-time-text dimmed" id="currentDate">11 dec</span>
+      </div>
+      <div class="header-right">
+        <span class="date-time-text dimmed" id="currentTime">11:10</span>
+<!--        <span class="date-time-text dimmed"><i class="fas fa-temperature-high"></i> 22°</span>-->
+      </div>
+    </header>
+
+    <!-- Main content area -->
+    <main>
+      <!-- Home section with profile and menu -->
+      <section id="homeSection" class="home-section">
+        <!-- Profile section -->
+        <div id="profileContainer" class="profile-container">
+          <img src="/Untitled-1.png" alt="Profile" class="profile-image">
+        </div>
+
+        <!-- Menu items will be added here by JavaScript -->
+        <div id="menuContainer" class="menu-container"></div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+          <i class="fas fa-angle-down fa-2x"></i>
+          <span style="margin-top: 0.5rem;">Scroll to explore</span>
+        </div>
+      </section>
+
+      <!-- Content pages -->
+      <section id="educationPage" class="content-page">
+        <h2 class="content-title">Education</h2>
+        <div class="content-card">
+          <h3 class="card-title">Master of Computer Science</h3>
+          <p class="card-subtitle">Stanford University</p>
+          <p class="card-date">2020 - 2022</p>
+          <p class="card-text">Focused on AI and Machine Learning. Graduated with honors. Participated in cutting-edge research projects working with professors at the forefront of artificial intelligence.</p>
+        </div>
+        <div class="content-card">
+          <h3 class="card-title">Bachelor of Science in Computer Science</h3>
+          <p class="card-subtitle">MIT</p>
+          <p class="card-date">2016 - 2020</p>
+          <p class="card-text">Minor in Mathematics. Dean's List all semesters. Participated in competitive programming competitions and led the campus web development club that created applications for student life.</p>
+        </div>
+      </section>
+
+      <section id="experiencePage" class="content-page">
+        <h2 class="content-title">Work Experience</h2>
+        <div class="content-card">
+          <h3 class="card-title">Senior Frontend Developer</h3>
+          <p class="card-subtitle">Google</p>
+          <p class="card-date">2022 - Present</p>
+          <p class="card-text">Leading UI/UX development for next-generation web applications. Created responsive interfaces used by millions of users daily. Implemented cutting-edge animations and interactions that improved user engagement metrics by 30%.</p>
+        </div>
+        <div class="content-card">
+          <h3 class="card-title">Software Engineer</h3>
+          <p class="card-subtitle">Microsoft</p>
+          <p class="card-date">2020 - 2022</p>
+          <p class="card-text">Worked on React-based applications with focus on accessibility. Collaborated with cross-functional teams to develop user-centered interfaces. Conducted usability tests and implemented improvements based on user feedback.</p>
+        </div>
+      </section>
+
+      <section id="projectsPage" class="content-page">
+        <h2 class="content-title">Projects</h2>
+        <div class="cards-grid">
+          <div class="content-card">
+            <h3 class="card-title">Smart Mirror UI</h3>
+            <p class="card-text">An interactive smart mirror interface with health tracking. Features voice commands, personalized weather forecasts, and calendar integration with elegant animations.</p>
+            <div class="card-tags"><i class="fab fa-react"></i> React • <i class="fas fa-cube"></i> Three.js • WebGL</div>
+          </div>
+          <div class="content-card">
+            <h3 class="card-title">Portfolio Generator</h3>
+            <p class="card-text">AI-powered portfolio website generator with custom animations. The tool analyzes user input to create personalized portfolios with optimized UI/UX based on industry best practices.</p>
+            <div class="card-tags"><i class="fab fa-react"></i> React • <i class="fab fa-css3"></i> TailwindCSS • <i class="fas fa-brain"></i> AI</div>
+          </div>
+          <div class="content-card">
+            <h3 class="card-title">Quantum Computing Visualizer</h3>
+            <p class="card-text">Interactive visualization of quantum computing concepts. Makes complex quantum principles accessible through intuitive visual representations and interactive simulations.</p>
+            <div class="card-tags"><i class="fas fa-chart-line"></i> D3.js • WebGL • <i class="fab fa-react"></i> React</div>
+          </div>
+          <div class="content-card">
+            <h3 class="card-title">Neural Network Playground</h3>
+            <p class="card-text">Educational tool for exploring neural networks visually. Users can create and train custom networks, visualize the learning process, and understand how AI works under the hood.</p>
+            <div class="card-tags"><i class="fas fa-brain"></i> TensorFlow.js • <i class="fab fa-react"></i> React • SVG</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="researchPage" class="content-page">
+        <h2 class="content-title">Research Papers</h2>
+        <div class="content-card">
+          <h3 class="card-title">Novel Approaches to Interactive UI Animations</h3>
+          <p class="card-subtitle">Published in ACM CHI 2023</p>
+          <p class="card-text">Exploring performance-optimized animation techniques for modern web interfaces. Demonstrated that properly implemented animations can improve user comprehension by up to 42% while maintaining high performance on mobile devices.</p>
+        </div>
+        <div class="content-card">
+          <h3 class="card-title">Accessibility in Motion: Inclusive Animation Patterns</h3>
+          <p class="card-subtitle">Published in IEEE Transactions on Visualization, 2022</p>
+          <p class="card-text">Research on creating motion-based interfaces that are accessible to all users. Developed new guidelines for animations that respect user preferences for reduced motion while still conveying important state changes in applications.</p>
+        </div>
+      </section>
+
+      <section id="bioPage" class="content-page">
+        <h2 class="content-title">About Me</h2>
+        <div class="content-card">
+          <p class="card-text">I'm a UI/UX developer with a passion for creating immersive, intuitive interfaces that bridge technology and human experience. My approach combines creative design with technical precision to build digital experiences that feel natural and engaging.</p>
+          <p class="card-text">With over 5 years of experience in frontend development, I specialize in creating responsive, accessible, and visually striking web applications using modern frameworks like React and Vue. I'm particularly interested in animation, interaction design, and finding ways to make complex functionality feel simple and intuitive.</p>
+          <p class="card-text">When I'm not coding, you can find me exploring photography, practicing mindfulness, or hiking in nature to find inspiration for my next digital creation. I believe that the best interfaces draw from our experiences in the physical world, translated thoughtfully into the digital realm.</p>
+        </div>
+      </section>
+
+      <section id="contactPage" class="content-page">
+        <h2 class="content-title">Contact</h2>
+        <div class="cards-grid">
+          <div class="content-card flex-card">
+            <div class="card-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <h3 class="card-title">Email</h3>
+              <p class="card-tags">hello@yourname.com</p>
+            </div>
+          </div>
+          <div class="content-card flex-card">
+            <div class="card-icon"><i class="fab fa-linkedin"></i></div>
+            <div>
+              <h3 class="card-title">LinkedIn</h3>
+              <p class="card-tags">linkedin.com/in/yourname</p>
+            </div>
+          </div>
+          <div class="content-card flex-card">
+            <div class="card-icon"><i class="fab fa-github"></i></div>
+            <div>
+              <h3 class="card-title">GitHub</h3>
+              <p class="card-tags">github.com/yourname</p>
+            </div>
+          </div>
+          <div class="content-card flex-card">
+            <div class="card-icon"><i class="fab fa-twitter"></i></div>
+            <div>
+              <h3 class="card-title">Twitter</h3>
+              <p class="card-tags">@yourhandle</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Navigation dots -->
+    <div class="nav-dots" id="navDots">
+      <!-- Dots will be added by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Menu item configuration
+    const menuItems = [
+      { id: 'education', label: 'Education', icon: 'fa-graduation-cap', angle: 225 },
+      { id: 'experience', label: 'Experience', icon: 'fa-briefcase', angle: 270 },
+      { id: 'projects', label: 'Projects', icon: 'fa-rocket', angle: 315 },
+      { id: 'research', label: 'Research', icon: 'fa-file-alt', angle: 45 },
+      { id: 'bio', label: 'Bio', icon: 'fa-user', angle: 90 },
+      { id: 'contact', label: 'Contact', icon: 'fa-envelope', angle: 135 }
+    ];
+
+    // DOM elements
+    const profileContainer = document.getElementById('profileContainer');
+    const menuContainer = document.getElementById('menuContainer');
+    const backButton = document.getElementById('backButton');
+    const dateElement = document.getElementById('currentDate');
+    const timeElement = document.getElementById('currentTime');
+    const navDots = document.getElementById('navDots');
+    const sections = ['home', ...menuItems.map(item => item.id)];
+    const homeSection = document.getElementById('homeSection');
+
+    // State
+    let currentPage = 'home';
+    let isTransitioning = false;
+
+    // Calculate position on a circle
+    function getCirclePosition(angle, radius) {
+      const radian = (angle - 90) * (Math.PI / 180);
+      return {
+        x: radius * Math.cos(radian),
+        y: radius * Math.sin(radian)
+      };
+    }
+
+    // Get final position when icon is hiding
+    function getHidePosition(angle) {
+      // If icon is on left side (angles 180-360), it goes to bottom (6 o'clock)
+      // If icon is on right side (angles 0-180), it goes to top (12 o'clock)
+      const hideAngle = angle > 180 ? 270 : 90;
+      return getCirclePosition(hideAngle, 400); // Larger radius to move out of view
+    }
+
+    // Navigate to a specific page
+    function navigateTo(pageId) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      // Hide profile and rotate menu items
+      profileContainer.style.opacity = '0';
+      profileContainer.style.transform = 'scale(0.95)';
+
+      // Animate menu items to their hide positions
+      const menuElements = document.querySelectorAll('.menu-item');
+      menuElements.forEach(element => {
+        const angle = parseFloat(element.dataset.angle);
+        const hidePos = getHidePosition(angle);
+        element.style.transform = `translate(calc(-50% + ${hidePos.x}px), calc(-50% + ${hidePos.y}px))`;
+        element.style.opacity = '0';
+      });
+
+      // Show back button
+      backButton.classList.remove('hidden');
+
+      // Scroll to the section
+      const section = document.getElementById(`${pageId}Page`);
+      if (section) {
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: 'smooth' });
+          isTransitioning = false;
+        }, 500);
+      }
+
+      currentPage = pageId;
+      updateActiveDot(pageId);
+    }
+
+    // Navigate back to home
+    function navigateHome() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      // Hide back button
+      backButton.classList.add('hidden');
+
+      // Scroll to home
+      homeSection.scrollIntoView({ behavior: 'smooth' });
+
+      // Show profile
+      profileContainer.style.opacity = '1';
+      profileContainer.style.transform = 'scale(1)';
+
+      // Move menu items back to their original positions
+      const menuElements = document.querySelectorAll('.menu-item');
+      menuElements.forEach(element => {
+        const angle = parseFloat(element.dataset.angle);
+        const radius = 190;
+        const pos = getCirclePosition(angle, radius);
+        element.style.transform = `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`;
+        element.style.opacity = '1';
+      });
+
+      currentPage = 'home';
+      updateActiveDot('home');
+      isTransitioning = false;
+    }
+
+    // Create menu items
+    function createMenuItems() {
+      menuItems.forEach(item => {
+        // Create menu item element
+        const menuItem = document.createElement('div');
+        menuItem.className = `menu-item ${item.angle > 180 && item.angle < 360 ? 'left-side' : ''}`;
+        menuItem.dataset.id = item.id;
+        menuItem.dataset.angle = item.angle;
+
+        // Calculate position on circle
+        const radius = 190;
+        const { x, y } = getCirclePosition(item.angle, radius);
+        menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+
+        // Create inner HTML
+        menuItem.innerHTML = `
+          <div class="menu-icon">
+            <i class="fas ${item.icon} menu-icon-text"></i>
+          </div>
+          <span class="menu-label">${item.label}</span>
+        `;
+
+        // Add click event
+        menuItem.addEventListener('click', () => {
+          navigateTo(item.id);
+        });
+
+        // Add to container
+        menuContainer.appendChild(menuItem);
+      });
+    }
+
+    // Create navigation dots
+    function createNavDots() {
+      sections.forEach(section => {
+        const dot = document.createElement('div');
+        dot.className = `nav-dot ${section === 'home' ? 'active' : ''}`;
+        dot.dataset.section = section;
+        dot.addEventListener('click', () => {
+          if (section === 'home') {
+            navigateHome();
+          } else {
+            navigateTo(section);
+          }
+        });
+        navDots.appendChild(dot);
+      });
+    }
+
+    // Update active navigation dot
+    function updateActiveDot(section) {
+      document.querySelectorAll('.nav-dot').forEach(dot => {
+        if (dot.dataset.section === section) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    // Initialize back button
+    backButton.addEventListener('click', navigateHome);
+
+    // Update date and time
+    function updateDateTime() {
+      const now = new Date();
+
+      // Update greeting based on time of day
+      const hours = now.getHours();
+      const greeting = hours < 12 ? 'Good morning' : hours < 18 ? 'Good afternoon' : 'Good evening';
+      document.querySelector('.header-left .date-time-text').textContent = greeting;
+
+      // Update date
+      const day = now.getDate();
+      const month = new Intl.DateTimeFormat('en', { month: 'short' }).format(now).toLowerCase();
+      dateElement.textContent = `${day} ${month}`;
+
+      // Update time
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      timeElement.textContent = `${hours}:${minutes}`;
+    }
+
+    // Handle scroll effects
+    function handleScroll() {
+      const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      // Check if home is visible
+      if (scrollPosition < windowHeight / 2) {
+        console.log("here");
+        currentPage = 'home';
+        updateActiveDot('home');
+        backButton.classList.add('hidden');
+      } else {
+        backButton.classList.remove('hidden');
+      }
+
+      // Check which section is visible
+      document.querySelectorAll('.content-page').forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+
+        if (scrollPosition > sectionTop - windowHeight / 2 &&
+            scrollPosition < sectionTop + sectionHeight - windowHeight / 2) {
+          const sectionId = section.id.replace('Page', '');
+          if (currentPage !== sectionId) {
+            currentPage = sectionId;
+            updateActiveDot(sectionId);
+          }
+
+          // Add visible class for animation
+          section.classList.add('visible');
+        }
+      });
+    }
+
+    // Initialize
+    function init() {
+      createMenuItems();
+      createNavDots();
+      updateDateTime();
+      setInterval(updateDateTime, 60000); // Update time every minute
+
+      // Initial visibility check
+      handleScroll();
+
+      // Add scroll event listener
+      window.addEventListener('scroll', handleScroll);
+    }
+
+    // Run initialization
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
